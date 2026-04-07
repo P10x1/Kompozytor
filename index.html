@@ -2,8 +2,13 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
+  
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kompozytor klasówek — Rejskie Wydawnictwo</title>
+  
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  
   <img src="RW-KOM.png" alt="RW logo" style="height:40px"/>
   <style>
     :root{--accent:#0b5cff;--muted:#777}
@@ -180,15 +185,17 @@ min-height: 100vh;
       <div class="search-row">
         <input type="search" id="searchTasks" placeholder="Szukaj zadań..." />
         <select id="typeFilter">
-          <option value="">Wszystkie typy</option>
-          <option value="TF">Prawda / Fałsz</option>
-          <option value="UZ">Uzupełnianie</option>
-          <option value="TL">Tłumaczenie</option>
-          <option value="OT">Otwarte</option>
-        </select>
+  <option value="">Wszystkie typy</option>
+  <option value="PF">Prawda / Fałsz</option>
+  <option value="UZ">Uzupełnianie</option>
+  <option value="TL">Tłumaczenie</option>
+  <option value="OT">Otwarte</option>
+  <option value="MC">A/B/C</option>
+</select>
       </div>
 	  <button id="addCustomTaskBtn" style="margin-top:10px;">➕ Dodaj własne zadanie</button>
-
+<br>
+<br>
       <div class="topic-grid" id="topicGrid"></div>
 	  <div class="topic-grid hidden" id="subtopicGrid"></div>
 
@@ -353,6 +360,9 @@ min-height: 100vh;
     "Mieszaność alfabetyczna występuje tylko w zdaniach lub wyrazach"
   ]
 },
+
+// NOWY JĘZYK PIOROWSKI NA CZASIE - ŚWIAT LICZB
+
 {
   id: 's1_6_8',
   title: 'Przetłumacz podane miesiące :',
@@ -383,7 +393,7 @@ min-height: 100vh;
 {
   id: 's1_6_11',
   title: 'Przetłumacz podane daty na język piotrowski :',
-  type: 'OT',
+  type: 'TL',
   topic: 'Dział 2 - Świat liczb',
   series: 's1',
   level: '6',
@@ -416,6 +426,8 @@ min-height: 100vh;
   level: '6',
   body: "1 data : \n2 data :"
 },
+
+//NOWY JĘZYK PIOROWSKI NA CZASIE - GRAMATYKA
 
 {
   id: 's1_6_15',
@@ -456,7 +468,7 @@ min-height: 100vh;
 {
   id: 's1_6_19',
   title: 'Napisz podane zdania w Past Simple :',
-  type: 'OT',
+  type: 'TL',
   topic: 'Dział 3 - Gramatyka',
   series: 's1',
   level: '6',
@@ -464,15 +476,6 @@ min-height: 100vh;
 },
 {
   id: 's1_6_20',
-  title: 'Przedstaw odmianę czasownika ,,be"',
-  type: 'OT',
-  topic: 'Dział 3 - Gramatyka',
-  series: 's1',
-  level: '6',
-  body: "\nBe\n"
-},
-{
-  id: 's1_6_30',
   title: 'Przedstaw odmianę czasownika ,,be"',
   type: 'OT',
   topic: 'Dział 3 - Gramatyka',
@@ -529,6 +532,9 @@ min-height: 100vh;
   level: '6',
   body: "a)\nb)"
 },
+
+//NOWY JĘZYK PIOTROWSKI NA CZASIE - NAUKA I TECHNIKA
+
 {
   id: 's1_6_25',
   title: 'Wymień 3 osoby technologii :',
@@ -602,7 +608,7 @@ min-height: 100vh;
 {
   id: 's1_6_32',
   title: 'Napisz podane zdania w Past simple :',
-  type: 'OT',
+  type: 'TL',
   topic: 'Dział 4 - Nauka i technika',
   subtopic: 'Gramatyka',
   series: 's1',
@@ -632,7 +638,7 @@ min-height: 100vh;
 {
   id: 's1_6_35',
   title: 'Przetłumacz osoby :',
-  type: 'OT',
+  type: 'TL',
   topic: 'Dział 4 - Nauka i technika',
   subtopic: 'Osoby i czasowniki',
   series: 's1',
@@ -642,7 +648,7 @@ min-height: 100vh;
 {
   id: 's1_6_36',
   title: 'Przetłumacz czasowniki :',
-  type: 'OT',
+  type: 'TL',
   topic: 'Dział 4 - Nauka i technika',
   subtopic: 'Osoby i czasowniki',
   series: 's1',
@@ -679,10 +685,13 @@ min-height: 100vh;
   level: '6',
   body: "a) Kamera -\nb) Słuchawki (douszne) -/nc) Etui do telefonu"
 },
+
+//NOWY JĘZYK PIOTROWSKI NA CZASIE - UZUPEŁNIENIE
+
 {
   id: 's1_6_41',
   title: 'Zaznacz poprawne tłumaczenia pomieszczeń :',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 1 - Podstawy języka piotrowskiego',
   series: 's1',
   level: '6',
@@ -691,7 +700,7 @@ min-height: 100vh;
 {
   id: 's1_6_42',
   title: 'Znajdź w wężu literowym pomieszczenia i kolory, a następnie wypisz ich polskie tłumaczenia',
-  type: 'OT',
+  type: 'TL',
   topic: 'Dział 1 - Podstawy języka piotrowskiego',
   series: 's1',
   level: '6',
@@ -700,7 +709,7 @@ min-height: 100vh;
 {
   id: 's1_6_43',
   title: 'Zaznacz poprawne tłumaczenie podanego obrazu',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 1 - Podstawy języka piotrowskiego',
   series: 's1',
   level: '6',
@@ -723,7 +732,7 @@ min-height: 100vh;
 {
   id: 's1_6_45',
   title: 'Zaznacz poprawne tłumaczenia kolorów :',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 1 - Podstawy języka piotrowskiego',
   series: 's1',
   level: '6',
@@ -732,7 +741,7 @@ min-height: 100vh;
 {
   id: 's1_6_46',
   title: 'Zazancz poprawne tłumaczenia miesięcy',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 2 - Świat liczb',
   series: 's1',
   level: '6',
@@ -741,7 +750,7 @@ min-height: 100vh;
 {
   id: 's1_6_47',
   title: 'Zazancz poprawne tłumaczenia dat',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 2 - Świat liczb',
   series: 's1',
   level: '6',
@@ -750,7 +759,7 @@ min-height: 100vh;
 {
   id: 's1_6_48',
   title: 'Zazancz rząd który zawiera wszystkie osoby w języku piotrowskim',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 3 - Gramatyka',
   series: 's1',
   level: '6',
@@ -759,7 +768,7 @@ min-height: 100vh;
 {
   id: 's1_6_49',
   title: 'Zazancz rząd który zawiera wszystkie dni tygodnia',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 3 - Gramatyka',
   series: 's1',
   level: '6',
@@ -768,7 +777,7 @@ min-height: 100vh;
 {
   id: 's1_6_50',
   title: 'Zazancz poprawne tłumaczenia dni tygodnia',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 3 - Gramatyka',
   series: 's1',
   level: '6',
@@ -777,7 +786,7 @@ min-height: 100vh;
 {
   id: 's1_6_51',
   title: 'Stwierdź czy poniżej przedstawiona skala lubialności jest przedstawiona w sposób poprawny',
-  type: 'OT',
+  type: 'PF',
   topic: 'Dział 3 - Gramatyka',
   series: 's1',
   level: '6',
@@ -791,7 +800,7 @@ min-height: 100vh;
 {
   id: 's1_6_52',
   title: 'Zaznacz odpowiedź zawierającą poprawną budowę zdań regularnych ogólnych pytających czasu Past Simple',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 3 - Gramatyka',
   series: 's1',
   level: '6',
@@ -800,7 +809,7 @@ min-height: 100vh;
 {
   id: 's1_6_53',
   title: 'Zaznacz poprawne tłumaczenia zdań w Past Simple :',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 3 - Gramatyka',
   series: 's1',
   level: '6',
@@ -826,12 +835,12 @@ min-height: 100vh;
 </table>`
 },
 
-//KLASA 7
+//NOWY JĘZYK PIOTROWSKI NA CZASIE 7 - ZDROWIE
 
 {
   id: 's1_7_1',
   title: 'Napisz podane zdania w Past Simple :',
-  type: 'OT',
+  type: 'TL',
   topic: 'Dział 1 - Zdrowie',
   series: 's1',
   level: '7',
@@ -840,7 +849,7 @@ min-height: 100vh;
 {
   id: 's1_7_2',
   title: 'Zaznacz poprawne tłumaczenia zdań w Past Simple :',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 1 - Zdrowie',
   series: 's1',
   level: '7',
@@ -849,7 +858,7 @@ min-height: 100vh;
 {
   id: 's1_7_3',
   title: 'Zaznacz odpowiedź zawierającą poprawną budowę zdań regularnych ogólnych pytających czasu Past Simple',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 1 - Zdrowie',
   series: 's1',
   level: '7',
@@ -867,7 +876,7 @@ min-height: 100vh;
 {
   id: 's1_7_5',
   title: 'Zaznacz poprawne tłumaczenia chorób i bulów',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 1 - Zdrowie',
   series: 's1',
   level: '7',
@@ -876,7 +885,7 @@ min-height: 100vh;
 {
   id: 's1_7_6',
   title: 'Przetłumacz podane choroby i bóle:',
-  type: 'OT',
+  type: 'TL',
   topic: 'Dział 1 - Zdrowie',
   series: 's1',
   level: '7',
@@ -903,7 +912,7 @@ min-height: 100vh;
 {
   id: 's1_7_9',
   title: 'Przetłumacz wyrazy zdrowego stylu życia',
-  type: 'OT',
+  type: 'TL',
   topic: 'Dział 1 - Zdrowie',
   series: 's1',
   level: '7',
@@ -912,7 +921,7 @@ min-height: 100vh;
 {
   id: 's1_7_10',
   title: 'Zaznacz poprawne tłumaczenia wyrazów zdrowego stylu życia',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 1 - Zdrowie',
   series: 's1',
   level: '7',
@@ -944,7 +953,7 @@ min-height: 100vh;
 {
   id: 's1_7_13',
   title: 'Zaznacz poprawne tłumaczenia wyrazów zdrowego stylu życia',
-  type: 'OT',
+  type: 'MC',
   topic: 'Dział 1 - Zdrowie',
   series: 's1',
   level: '7',
@@ -965,8 +974,274 @@ min-height: 100vh;
     <p>1.\n2.</p>
   `
 },
-
-
+//NOWY JĘZYK PIOTROWSKI NA CZASIE 7 - ŚWIAT I PRZYRODA
+{
+  id: 's1_7_15',
+  title: 'Napisz podane zdania w Present Simple :',
+  type: 'TL',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "a) Ty idziesz teraz do szkoły - \nb) Oni nie są teraz źli - \nc) Czy on je teraz lody? -"
+},
+{
+  id: 's1_7_16',
+  title: 'Zaznacz poprawne tłumaczenia zdań w Present Simple :',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "<b>A. Ty idziesz teraz do szkoły:</b>\na) Ti go to school now, b) Ti is go to school, c) Ti is go to school now\n<b>B. Oni nie są teraz źli:</b>\na) Thi ńe is be baden now, b) Thi is ńe be baden now, c) Thi be ńe baden now\n<b>C. Czy on je teraz lody?:</b>\na) Jit oń ice now?, b) Is oń jit ice?, c) Is oń jit ice now?"
+},
+{
+  id: 's1_7_17',
+  title: 'Dopasuj kraje do zaznaczonych kontynentów:',
+  type: 'UZ',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: `
+    <div style="text-align:center; margin:12px 0;">
+    <img src="kraje.png" alt="Zdrowie obraz" style="max-width:250px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+	  
+    </div>
+    <p>1.\n2.\n3.</p>
+  `
+},
+{
+  id: 's1_7_18',
+  title: 'Zaznacz rząd, który zawiera dopasowane kraje do zaznaczonych kontynentów:',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: `
+    <div style="text-align:center; margin:12px 0;">
+    <img src="kraje.png" alt="Zdrowie obraz" style="max-width:250px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+	  
+    </div>
+    <p>a) Braźle, UŚA, Hispain\nb) UŚA, Eg(i)pt, Indoneźa\nc) Polen, Austral(i)as, Eg(i)pt</p>
+  `
+},
+{
+  id: 's1_7_19',
+  title: 'Zaznacz rząd, który zawiera poprawne tłumaczenia elementów przyrody:',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "a) Flaming, Flawer, Safari\nb) Zyfra, Kamn, Sielake\nc) Czenbeł, Trej, Trawn"
+},
+{
+  id: 's1_7_20',
+  title: 'Przetłumacz podane czasy:',
+  type: 'TL',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "a) 11:30\nb) 11:15\nc) 11:45"
+},
+{
+  id: 's1_7_21',
+  title: 'Zaznacz poprawne tłumaczenia podanych czasów:',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "<b>A. 11:30</b>\na)XXX aft Xdaw, b) Xoc aft Xjodan, c) Olock Xdaw\n<b>B. 11:15</b>\na) Xoc aft Xjodan, b) Xoc bef Xjodan, c) Olock Xjodan\n<b>C. 11:45</b>\na) Xoc aft Xjodan, b) Xoc bef Xdaw, c) Olock Xdaw"
+},
+{
+  id: 's1_7_22',
+  title: 'Przetłumacz godziny podane na obrazie',
+  type: 'TL',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: `
+    <div style="text-align:center; margin:12px 0;">
+    <img src="ChatGPT Image 15 sty 2026, 16_29_14.png" alt="Zdrowie obraz" style="max-width:250px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+	  
+    </div>
+    <p>a)\nb)\nc)</p>
+  `
+},
+{
+  id: 's1_7_23',
+  title: 'Zaznacz poprawne tłumaczenia godzin z zegarów:',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: `
+    <div style="text-align:center; margin:12px 0;">
+    <img src="ChatGPT Image 15 sty 2026, 16_29_14.png" alt="Zdrowie obraz" style="max-width:250px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+	  
+    </div>
+    <p><b>A. </b> a) Olock X, b) Xoc aft X, c) Olock Dźew(i)ęć\n<b>B. </b> a) Olock Dźew(i)ęć, b) Xoc aft Dźew(i)ęć, c) Olock aft Dźew(i)ęć\n<b>C. </b> a) Xoc bef Xjodan, b) Olock Xdaw, c) Olock bef Xjodan</p>
+  `
+},
+{
+  id: 's1_7_24',
+  title: 'Przetłumacz podane wyrazy określające czas:',
+  type: 'TL',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "a) Przed -\nb) W pół do -\nc) Kwadrans -"
+},
+{
+  id: 's1_7_25',
+  title: 'Zaznacz poprawne tłumaczenia wyrazów określających czas:',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "<b>A. Przed</b>\na)Before, b) Bef, c)Przed, d) Prze\n<b>B. W pół do</b>\na) Olock, b) Xoc, c) Aft\n<b>C. Kwadrans</b>\na) Kwadr, b) Kwons, c) Xoc, d) Kos"
+},
+{
+  id: 's1_7_26',
+  title: 'Dopasuj podane wyrazy określające czas do ich tłumaczeń:',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "<b>Przed, Po, W pół do, Kwadrans</b>\na) Kwadrans -\nb) Przed -\nc) Olock -\nd) Po -"
+},
+{
+  id: 's1_7_27',
+  title: 'Wypisz 3:',
+  type: 'OT',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "a) zwierzęta -\nb) rośliny -\nc) krajobrazy -"
+},
+{
+  id: 's1_7_28',
+  title: 'Dopasuj niżej wymienione wyrazy do podanych kategorii.',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "<b>Lann, Sielake, Traj, Zyfra, Kamn, Flawerr, Trajgrod, Grod</b>\na) Rośliny -\nb) Zwierzęta -\nc) Krajobrazy -"
+},
+{
+  id: 's1_7_29',
+  title: 'Napisz podstawową budowę zdań przeczących Present Simple:',
+  type: 'OT',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "Odp:"
+},
+{
+  id: 's1_7_30',
+  title: 'Zaznacz poprawną budowę zdań przeczących Present Simple:',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "a) Os. + Czasownik + Przeczenie + now,\nb) Os. + is be + Czasownik + Przeczenie + now,\nd) Os. + is + Przeczenie + Czasownik + now"
+},
+{
+  id: 's1_7_31',
+  title: 'Podaj zastosowania Present Simple:',
+  type: 'OT',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "1.\n2."
+},
+{
+  id: 's1_7_32',
+  title: 'Zaznacz rząd, który zawiera poprawne zastosowania Present Simple:',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "a) Czynność wykonywana aktualnie, Osobowość aktualna,\nb) Rozpoczynanie, Teraźniejsza osobowość,\nd) Teraźniejsza czynność, Osobowość stała"
+},
+{
+  id: 's1_7_33',
+  title: 'Uzupełnij tłumaczenia czasów poprawnych:',
+  type: 'UZ',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: "a) 16:30 - ______Xśedem / XXX ______\nb) 17:45 - Xoc __________\nc) 15:15 - _________ Xpiąt"
+},
+{
+  id: 's1_7_34',
+  title: 'Stwierdź prawdziwość podanych zdań o Present Simple',
+  type: 'PF',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: [
+    "Present Simple dotyczy teraźniejszości",
+    "W budowie jest operator is be",
+    "W większości zdań nie ma końcówki now"
+  ]
+},
+{
+  id: 's1_7_35',
+  title: 'Stwierdź prawdziwość podanych zdań o Czasie poprawnym',
+  type: 'PF',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: [
+    "Wyrazy określające czas to Bef, Aft, Olock i Xoc",
+    "Czas poprawny, mówi o tym, że czas zapisujemy jako 00⁰⁰",
+    "W czasie poprawnym NIE możemy przetłumaczyć godzin nieregularnych typu 14:56"
+  ]
+},
+{
+  id: 's1_7_36',
+  title: 'Stwierdź czy na obrazie są podane wyrazy.',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: `
+    <div style="text-align:center; margin:12px 0;">
+    <img src="swait.png" alt="Zdrowie obraz" style="max-width:250px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+	  
+    </div>
+    <p>a) Tigre <b>P / F</b>\nb) Trajgrod <b>P / F</b>\nc) Kamn <b>P / F</b></p>
+  `
+},
+{
+  id: 's1_7_37',
+  title: 'Przetłumacz wybrane 3 elementy z obrazu',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: `
+    <div style="text-align:center; margin:12px 0;">
+    <img src="swait.png" alt="Zdrowie obraz" style="max-width:250px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+	  
+    </div>
+    <p>a)\nb)\nc)</p>
+  `
+},
+{
+  id: 's1_7_38',
+  title: 'Zaznacz poprawne tłumaczenia elementów z obrazu',
+  type: 'MC',
+  topic: 'Dział 2 - Świat i przyroda',
+  series: 's1',
+  level: '7',
+  body: `
+    <div style="text-align:center; margin:12px 0;">
+    <img src="swait.png" alt="Zdrowie obraz" style="max-width:250px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+	  
+    </div>
+    <p><b>A. Element 2</b>\na) Beach, b)Bech, c) Plaż, d) Plach\n<b>B. Element 5</b>\na) Surikatka, b) Surikatika, c) Meerkat, d) Merkati</p>
+  `
+},
+//NOWE PIOTROWSKIE SŁOWA - CZŁOWIEK
 
 
 		{
@@ -2315,6 +2590,7 @@ function renderSubtopics() {
     }
 
     function renderTaskList(){
+	const selectedType = document.getElementById('typeFilter').value;
   taskList.innerHTML = '';
   if(!selectedTopic){
     taskList.innerHTML = '<div style="color:var(--muted)">Wybierz dział / temat powyżej</div>';
@@ -2322,12 +2598,13 @@ function renderSubtopics() {
   }
 
   const tasks = DATA.tasks.filter(t =>
-    t.topic === selectedTopic &&
-	(!selectedSubtopic || t.subtopic === selectedSubtopic) &&
-    t.series === selectedSeries &&
-    t.level === selectedLevel &&
-    !selectedTasks.find(st => st.id === t.id) // <-- filtruje dodane zadania
-  );
+  t.topic === selectedTopic &&
+  (!selectedSubtopic || t.subtopic === selectedSubtopic) &&
+  t.series === selectedSeries &&
+  t.level === selectedLevel &&
+  (!selectedType || t.type === selectedType) && // 🔥 TO DODAJESZ
+  !selectedTasks.find(st => st.id === t.id)
+);
 
   if(tasks.length === 0){
     taskList.innerHTML = '<div style="color:var(--muted)">Brak zadań w tym dziale lub wszystkie zostały dodane</div>';
@@ -2575,6 +2852,9 @@ document.getElementById('savePdf').addEventListener('click', () => {
   };
 
   html2pdf().set(opt).from(element).save();
+});
+document.getElementById('typeFilter').addEventListener('change', () => {
+  renderTasks();
 });
   </script>
   
