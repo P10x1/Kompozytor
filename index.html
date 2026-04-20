@@ -165,7 +165,11 @@ min-height: 100vh;
   font-weight: 600;
   font-size: 14px;
 }
-
+@media print {
+  .actions, button, footer {
+    display: none !important;
+  }
+}
 
 
 
