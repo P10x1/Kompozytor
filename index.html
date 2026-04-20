@@ -229,6 +229,7 @@ min-height: 100vh;
             <div style="border-bottom:1px solid #000; width:220px; height:20px"></div>
 			<text>Klasa, Data :</text>
             <div style="width:150px; border-bottom:1px solid #000; height:20px"></div>
+
           </div>
         </div>
         <hr style="margin:12px 0;border:none;border-top:1px dashed #eef2ff" />
@@ -2664,17 +2665,21 @@ level: selectedLevel
   });
 });
 document.getElementById('savePdf').addEventListener('click', () => {
+  // Pobieramy tytuł z pola input, żeby nazwa pliku była poprawna
+  const testTitle = document.getElementById('titleInput').value || 'moj-test';
+  
+  // Wskazujemy tylko element karty testu (bez przycisków panelu)
   const element = document.getElementById('testCard');
-  const title = document.getElementById('titleInput').value || 'test';
 
   const opt = {
-    margin: 10,
-    filename: title + '.pdf', // 👈 TU ustawiasz nazwę pliku
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    margin:       [10, 10], // marginesy [góra/dół, lewo/prawo]
+    filename:     `${testTitle}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true }, // scale: 2 poprawia jakość
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
+  // Uruchamiamy generowanie tylko RAZ
   html2pdf().set(opt).from(element).save();
 });
 document.getElementById('typeFilter').addEventListener('change', () => {
@@ -2722,3 +2727,23 @@ document.getElementById('typeFilter').addEventListener('change', () => {
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
