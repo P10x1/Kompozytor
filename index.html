@@ -229,7 +229,29 @@ canvas {
       background: var(--danger);
       color: white;
     }
-
+/* Style dla profesjonalnej tabelki Prawda/Fałsz na arkuszu */
+.pf-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+.pf-table th, .pf-table td {
+  border: 1px solid #000;
+  padding: 6px 10px;
+  text-align: left;
+}
+.pf-table th {
+  background-color: #f1f5f9; /* Delikatne tło nagłówka na ekranie, idealne też do druku */
+  font-weight: 700;
+  text-align: center;
+}
+.pf-table td.center-cell {
+  text-align: center;
+  width: 45px;
+  font-weight: 600;
+}
     .actions{display:flex; gap:6px; justify-content:flex-end}
     button{background:var(--accent); color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-weight: 600; font-size:13px;}
     button:hover{opacity: 0.9;}
@@ -2593,11 +2615,31 @@ canvas {
         li.className = 'task-item';
         
         let bodyHtml = '';
-        if (typeof task.body === 'string') {
-          bodyHtml = task.body.replace(/\n/g, '<br>');
-        } else if (Array.isArray(task.body)) {
-          bodyHtml = `<ul style="padding-left:20px; margin-top:5px;">${task.body.map(b => `<li>${b} [P / F]</li>`).join('')}</ul>`;
-        }
+if (typeof task.body === 'string') {
+  bodyHtml = task.body.replace(/\n/g, '<br>');
+} else if (Array.isArray(task.body)) {
+  // Generujemy elegancką tabelę zamiast zwykłej listy kropkowej
+  bodyHtml = `
+    <table class="pf-table">
+      <thead>
+        <tr>
+          <th>Treść zdania</th>
+          <th style="width: 50px;">P</th>
+          <th style="width: 50px;">F</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${task.body.map(zdanie => `
+          <tr>
+            <td>${zdanie}</td>
+            <td class="center-cell">P</td>
+            <td class="center-cell">F</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
 
         // Tytuły oczyszczamy z technicznych dopisków systemowych przy generowaniu arkusza
         const cleanTitle = task.title.replace(' (Własne)', '').replace(' (Edytowane)', '');
@@ -2634,17 +2676,14 @@ canvas {
       page.className = 'test-page';
       
       let headerHtml = `
-        <div class="header-row">
-          <div class="rw-logo"><img src="RW.png" alt="RW logo" onerror="this.style.display='none'" /></div>
-          <div class="test-meta">
-            <span>Imię i nazwisko:</span>
-            <div style="border-bottom:1px solid #000; width:160px; height:14px"></div>
-            <span>Klasa, Data:</span>
-            <div style="width:90px; border-bottom:1px solid #000; height:14px"></div>
-          </div>
-        </div>
-        <hr style="margin:12px 0; border:none; border-top:1px dashed #cfd4dc" />
-      `;
+  <div class="header-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+    <div class="rw-logo"><img src="RW.png" alt="RW logo" onerror="this.style.display='none'" /></div>
+    <div class="test-meta" style="font-size: 13px; font-weight: 500; color: #000; letter-spacing: 0.5px;">
+      Imię i nazwisko: _______________________, Klasa: _________, Data: ___________
+    </div>
+  </div>
+  <hr style="margin:12px 0; border:none; border-top:1px dashed #cfd4dc" />
+`;
 
       if (pageNum > 1) {
         headerHtml = `
