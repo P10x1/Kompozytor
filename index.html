@@ -2699,13 +2699,20 @@
       });
 
       document.getElementById('savePdf').addEventListener('click', () => {
-  const element = document.getElementById('testPageContainer');
+  // Pobieramy kartę testu (zależnie od tego, co pobierasz – jeśli pobierasz cały kontener, html2pdf i tak uderza w strukturę)
+  const element = document.getElementById('testCard') || document.getElementById('testPageContainer');
   const testTitle = document.getElementById('titleInput').value.trim() || 'kompozytor-klasowki';
   const safeFileName = testTitle.replace(/[/\\?%*:|"<>\s]/g, '_') + '.pdf';
 
-  // 1. Ukrywamy wszystkie przyciski nawigacyjne zadań przed zrobieniem "zdjęcia" przez PDF
+  // 1. Ukrywamy techniczne przyciski nawigacji zadań
   const buttons = document.querySelectorAll('.task-move-buttons');
   buttons.forEach(btn => btn.style.display = 'none');
+
+  // 2. Usuwamy cień i zaokrąglenie rogów z karty testu, żeby PDF był idealnie gładką kartką A4
+  const originalShadow = element.style.boxShadow;
+  const originalBorderRadius = element.style.borderRadius;
+  element.style.boxShadow = 'none';
+  element.style.borderRadius = '0';
 
   const opt = {
     margin:       0,
@@ -2715,9 +2722,13 @@
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
-  // 2. Generujemy PDF, a po zakończeniu (w sekcji .then) przywracamy przyciski na ekranie
+  // 3. Generujemy PDF, a po zakończeniu przywracamy pierwotny wygląd na ekranie
   html2pdf().set(opt).from(element).save().then(() => {
+    // Przywracamy przyciski nawigacji
     buttons.forEach(btn => btn.style.display = 'flex');
+    // Przywracamy cień i zaokrąglenia na ekranie komputera
+    element.style.boxShadow = originalShadow;
+    element.style.borderRadius = originalBorderRadius;
   });
 });
 
