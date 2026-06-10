@@ -41,7 +41,25 @@
     .sidebar-panel.collapsed .sidebar-content {
       display: none;
     }
+/* Ekstremalne oczyszczanie PDF - usuwa ukryte ramki przeglądarki i biblioteki */
+.html2pdf__page-boundary {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}
 
+/* Wymuszenie czystości na samych stronach testu w generowanym pliku */
+.test-page {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Dodatkowe zabezpieczenie przed ramką podczas przetwarzania canvas */
+canvas {
+  border: none !important;
+  box-shadow: none !important;
+}
     .toggle-sidebar-btn {
       position: absolute;
       top: 20px;
@@ -2699,46 +2717,41 @@
       });
 
       document.getElementById('savePdf').addEventListener('click', () => {
-  // Pobieramy element testu (w zależności od tego, czy używasz akurat struktury jedno- czy wielostronicowej)
-  const element = document.getElementById('testCard') || document.getElementById('testPageContainer');
+  const element = document.getElementById('testPageContainer');
   const testTitle = document.getElementById('titleInput').value.trim() || 'kompozytor-klasowki';
   const safeFileName = testTitle.replace(/[/\\?%*:|"<>\s]/g, '_') + '.pdf';
 
-  // 1. Ukrywamy techniczne przyciski (strzałki, kosz), aby nie trafiły do PDF
+  // 1. Ukrywamy techniczne przyciski (strzałki, kosz)
   const buttons = document.querySelectorAll('.task-move-buttons');
   buttons.forEach(btn => btn.style.display = 'none');
 
-  // 2. Tymczasowo zdejmujemy cienie i ramki w CSS za pomocą klasy lub stylów bezpośrednich
-  const originalShadow = element.style.boxShadow;
-  const originalBorder = element.style.border;
+  // 2. Całkowicie zerujemy kontener nadrzędny, w którym siedzą strony
   element.style.boxShadow = 'none';
   element.style.border = 'none';
+  element.style.outline = 'none';
+  element.style.background = 'transparent';
 
-  // CONFIG: Kluczowe modyfikacje usuwające ramki i wymuszające idealne białe tło papieru
   const opt = {
-    margin:       0, // Brak marginesów zewnętrznych, które tworzą biało-szare obwódki
+    margin:       0, // Brak marginesu zewnętrznego (likwiduje biało-szare obwódki wokół stron)
     filename:     safeFileName,
-    image:        { type: 'jpeg', quality: 1.0 }, // Podnosimy jakość do maksimum
+    image:        { type: 'jpeg', quality: 1.0 },
     html2canvas:  { 
       scale: 2, 
       useCORS: true,
       logging: false,
-      backgroundColor: '#ffffff', // Wymuszamy czyste, białe tło (likwiduje szare artefakty)
-      removeContainer: true       // Usuwa techniczny kontener renderujący biblioteki
+      backgroundColor: null, // Pozwala stylom CSS kontrolować tło i usuwa domyślną szarą ramkę silnika canvas
+      removeContainer: true
     },
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
-  // 3. Generujemy plik, a po zapisaniu przywracamy pierwotny wygląd aplikacji na ekranie
+  // 3. Generujemy plik i przywracamy stan aplikacji na ekranie komputera
   html2pdf().set(opt).from(element).save().then(() => {
     buttons.forEach(btn => btn.style.display = 'flex');
-    element.style.boxShadow = originalShadow;
-    element.style.border = originalBorder;
+    // Przywracamy domyślne tło obszaru roboczego na ekranie, by aplikacja dobrze wyglądała
+    element.style.background = ''; 
   }).catch(err => {
-    // W razie błędu też przywracamy przyciski
     buttons.forEach(btn => btn.style.display = 'flex');
-    element.style.boxShadow = originalShadow;
-    element.style.border = originalBorder;
     console.error(err);
   });
 });
