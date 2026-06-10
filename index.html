@@ -2589,11 +2589,11 @@
             <strong style="font-size:15px; display:block; margin-bottom:4px;">Zadanie ${index + 1}. <span style="font-weight:500;">${cleanTitle}</span></strong>
             <div style="padding-left:4px; font-size:14px; color:#333; line-height: 1.5;">${bodyHtml}</div>
           </div>
-          <div class="task-move-buttons">
-            <button class="btn-move" onclick="moveTask(${index}, -1)">▲</button>
-            <button class="btn-move" onclick="moveTask(${index}, 1)">▼</button>
-            <button class="btn-move btn-delete" onclick="deleteTask(${index})">🗑️</button>
-          </div>
+          <div class="task-move-buttons html2pdf__invisible">
+  <button class="btn-move" onclick="moveTask(${index}, -1)">▲</button>
+  <button class="btn-move" onclick="moveTask(${index}, 1)">▼</button>
+  <button class="btn-move btn-delete" onclick="deleteTask(${index})">🗑️</button>
+</div>
         `;
 
         currentList.appendChild(li);
@@ -2699,20 +2699,27 @@
       });
 
       document.getElementById('savePdf').addEventListener('click', () => {
-        const element = document.getElementById('testPageContainer');
-        const testTitle = document.getElementById('titleInput').value.trim() || 'kompozytor-klasowki';
-        const safeFileName = testTitle.replace(/[/\\?%*:|"<>\s]/g, '_') + '.pdf';
+  const element = document.getElementById('testPageContainer');
+  const testTitle = document.getElementById('titleInput').value.trim() || 'kompozytor-klasowki';
+  const safeFileName = testTitle.replace(/[/\\?%*:|"<>\s]/g, '_') + '.pdf';
 
-        const opt = {
-          margin:       0,
-          filename:     safeFileName,
-          image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, useCORS: true },
-          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
+  // 1. Ukrywamy wszystkie przyciski nawigacyjne zadań przed zrobieniem "zdjęcia" przez PDF
+  const buttons = document.querySelectorAll('.task-move-buttons');
+  buttons.forEach(btn => btn.style.display = 'none');
 
-        html2pdf().set(opt).from(element).save();
-      });
+  const opt = {
+    margin:       0,
+    filename:     safeFileName,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  // 2. Generujemy PDF, a po zakończeniu (w sekcji .then) przywracamy przyciski na ekranie
+  html2pdf().set(opt).from(element).save().then(() => {
+    buttons.forEach(btn => btn.style.display = 'flex');
+  });
+});
 
       // OBSŁUGA OKNA MODALNEGO (DODAWANIE I EDYCJA)
       const addCustomTaskBtn = document.getElementById('addCustomTaskBtn');
