@@ -2,306 +2,378 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kompozytor klasówek — Rejskie Wydawnictwo</title>
   
   <link rel="icon" type="image/png" href="favicon.png">
 
-  
   <style>
-    :root{--accent:#0b5cff;--muted:#777}
-    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; margin:0; background:#f4f6fb; color:#222}
-    .app {
-  display: grid;
-  grid-template-columns: 360px 1fr 420px;
-  gap: 18px;
-  padding: 18px;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
+    :root{--accent:#0b5cff;--muted:#777;--danger:#e63946}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; margin:0; background:#f4f6fb; color:#222; overflow-x: hidden;}
+    
+    /* Trzykolumnowy układ aplikacji */
+    .app-container {
+      display: grid;
+      grid-template-columns: 300px 400px 1fr;
+      min-height: calc(100vh - 70px);
+      position: relative;
+      transition: grid-template-columns 0.3s ease;
+    }
 
-.app.single {
-  grid-template-columns: 1fr; /* tryb tylko dla wyboru serii */
-}
+    .app-container.sidebar-collapsed {
+      grid-template-columns: 0px 400px 1fr;
+    }
 
+    /* 1. PANEL LEWY */
+    .sidebar-panel {
+      background: white;
+      box-shadow: 4px 0 15px rgba(12,20,40,0.03);
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-content {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .sidebar-panel.collapsed .sidebar-content {
+      display: none;
+    }
 
-min-height: 100vh;
- box-sizing:border-box}
-    .panel {
-  background: white;
-  border-radius: 16px;
-  padding: 24px 28px;
-  box-shadow: 0 6px 18px rgba(12,20,40,0.06);
-  overflow: auto;
-  width: 100%;
-  box-sizing: border-box;
-}
+    .toggle-sidebar-btn {
+      position: absolute;
+      top: 20px;
+      right: -24px;
+      width: 24px;
+      height: 50px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      box-shadow: 2px 2px 5px rgba(11,92,255,0.2);
+      z-index: 11;
+      padding: 0;
+    }
+
+    /* 2. PANEL ŚRODKOWY */
+    .middle-workspace {
+      background: #f8fafc;
+      padding: 20px;
+      border-right: 1px solid #e2e8f0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 3. PANEL PRAWY */
+    .right-preview-workspace {
+      padding: 20px;
+      background: #e2e8f0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .panel-header-box {
+      width: 100%;
+      max-width: 780px;
+      background: white;
+      padding: 12px 16px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
 
     .hidden{display:none!important}
-    .series-list{display:flex; flex-direction:column; gap:12px}
-    .series{display:flex; gap:12px; align-items:center; padding:10px; border-radius:10px; cursor:pointer; border:1px solid transparent}
-    .series:hover{border-color:#e3e9ff}
-    .series img{width:58px; height:58px; object-fit:contain}
-    .levels{display:flex; gap:8px; margin-top:8px}
-    .level{background:#f3f5ff; padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600}
+    .series-list{display:flex; flex-direction:column; gap:8px}
+    .levels{display:flex; gap:6px; margin-top:6px}
+    .level{background:#f3f5ff; padding:4px 8px; border-radius:6px; cursor:pointer; font-weight:600; font-size:12px;}
     .level.active{background:var(--accent); color:white}
-    .search-row{display:flex; gap:8px; margin-bottom:10px}
-    input[type="search"]{flex:1; padding:10px 12px; border-radius:10px; border:1px solid #e6e9f2}
-    .topic-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px}
-    .topic{padding:12px; background:#fff; border-radius:10px; cursor:pointer; border:1px solid #f0f2f8}
-    .task-list{margin-top:12px; display:grid; gap:8px}
-    .task{display:flex; gap:10px; align-items:flex-start; padding:10px; border-radius:10px; background:#fff; border:1px solid #f0f2f8}
-    .task .meta{font-size:12px; color:var(--muted)}
-    .test-preview{display:flex; flex-direction:column; gap:12px}
-    .test-card{background:white; padding:18px; border-radius:10px; min-height:200px; box-shadow:0 6px 18px rgba(12,20,40,0.05)}
+    
+    .search-row{display:flex; flex-direction: column; gap:8px; margin-bottom:12px}
+    input[type="search"], select, input[type="text"], textarea {padding:8px 12px; border-radius:8px; border:1px solid #e6e9f2; box-sizing: border-box;}
+    
+    .topic-grid{display:flex; flex-direction:column; gap:6px;}
+    .topic{padding:10px; background:#fff; border-radius:8px; cursor:pointer; border:1px solid #e8ebf8; font-size:13px; line-height: 1.4;}
+    .task-list{display:grid; gap:8px}
+    
+    /* GŁÓWNY ELEMENT ZADANIA NA LIŚCIE */
+    .task{display:flex; gap:10px; align-items:flex-start; padding:12px; border-radius:8px; background:#fff; border:1px solid #e2e8f0; cursor:pointer; transition: background 0.15s; position: relative;}
+    .task:hover {background: #f0f4ff; border-color: #cbd5e1;}
+    .task .meta{font-size:12px; color:var(--muted); margin-top: 4px; line-height: 1.4;}
+    
+    /* Przycisk edycji na liście zadań */
+    .btn-edit-task {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 2px 6px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: normal;
+      transition: all 0.1s;
+    }
+    .btn-edit-task:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    /* KARTKI A4 */
+    .test-page-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      width: 100%;
+      max-width: 780px;
+    }
+    
+    .test-page {
+      background: white;
+      width: 100%;
+      height: 1103px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      border: 1px solid #cbd5e1;
+      box-sizing: border-box;
+      padding: 55px 50px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .test-page-content {
+      flex: 1;
+      overflow: hidden;
+    }
+
     .header-row{display:flex; justify-content:space-between; align-items:center}
-    .rw-logo img{height:54px}
-    .test-meta{display:flex; gap:8px; align-items:center}
-    ol.tasks{padding-left:18px}
-    .task-item{margin-bottom:12px}
-    .actions{display:flex; gap:8px; justify-content:flex-end}
-    button{background:var(--accent); color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer}
+    .rw-logo img{height:42px}
+    .test-meta{display:flex; gap:6px; align-items:center; font-size:13px;}
+    
+    ol.tasks{padding-left:0; margin-top: 15px; list-style-type: none;}
+    
+    .task-item {
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .task-item-body {
+      flex: 1;
+    }
+
+    /* Reguła dla obrazów wrzucanych do treści zadań - surowe, naturalne krawędzie */
+    .task-item-body img {
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 10px;
+    }
+
+    .task-move-buttons {
+      display: flex;
+      gap: 3px;
+    }
+    .btn-move {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 4px 7px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-move:hover {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-delete {
+      background: #fef2f2;
+      color: var(--danger);
+      border: 1px solid #fee2e2;
+    }
+    .btn-delete:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .actions{display:flex; gap:6px; justify-content:flex-end}
+    button{background:var(--accent); color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-weight: 600; font-size:13px;}
+    button:hover{opacity: 0.9;}
     button.ghost{background:transparent; color:var(--accent); border:1px solid #dbe6ff}
-    .small{padding:6px 10px; font-size:14px}
-    footer{font-size:13px; color:var(--muted); margin-top:8px}
-    @media(max-width:1100px){.app{grid-template-columns:1fr 420px}}
-    @media(max-width:800px){.app{grid-template-columns:1fr; padding:10px} .test-preview{order:2}}
-	.step-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.topic.active {
-  background: #e8f0ff;
-  border-color: var(--accent);
-  font-weight: 600;
-}
-.subtopic {
-  background:#f9fbff;
-  border-left:3px solid var(--accent);
-  cursor:pointer;
-}
+    
+    .series { background: #fdfdfd; border-radius: 8px; padding: 10px; border: 1px solid #e8ebf8; cursor: pointer; }
+    .series .title { font-size: 13px; font-weight: 700; color: #222; }
+    .series-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+    .series-footer .edition { color: #d64cc0; font-weight: 600; font-size: 10px; }
 
-.subtopic.active {
-  background:#dfeaff;
-  border-color:var(--accent);
-  font-weight:600;
-}
+    .topic.active { background: #e8f0ff; border-color: var(--accent); font-weight: 600; }
+    .subtopic { background:#f9fbff; border-left:3px solid var(--accent); }
+    .subtopic.active { background:#dfeaff; font-weight:600; }
+    
+    @media print {
+      header, .sidebar-panel, .middle-workspace, .panel-header-box, .task-move-buttons { display: none !important; }
+      body, .right-preview-workspace { background: white; padding: 0; margin: 0; }
+      .app-container { display: block; }
+      .test-page-container { width: 100%; gap: 0; max-width: 100%; }
+      .test-page { border: none; box-shadow: none; padding: 0; margin: 0; page-break-after: always; break-after: always; width: 210mm; height: 297mm; }
+    }
 
-.subtopic-separator {
-  width:100%;
-  height:1px;
-  background:#d0d8ff;
-  margin:6px 0;
-  grid-column:1/-1;
-}
-/* --- Ulepszony wygląd wyboru serii --- */
-.series-list {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  width: 100%;
-}
-
-.series {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: #fff;
-  border-radius: 16px;
-  padding: 28px 32px;
-  box-shadow: 0 6px 18px rgba(12,20,40,0.05);
-  border: 1px solid #e8ebf8;
-  transition: all 0.25s ease;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.series:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 24px rgba(12,20,40,0.08);
-}
-
-.series .title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #222;
-  margin-bottom: 18px;
-}
-
-.series-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.series-footer .levels {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.series-footer .level {
-  background: #f3f5ff;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s;
-}
-
-.series-footer .level.active {
-  background: var(--accent);
-  color: #fff;
-}
-
-.series-footer .edition {
-  color: #d64cc0;
-  font-weight: 600;
-  font-size: 14px;
-}
-@media print {
-  .actions, button, footer {
-    display: none !important;
-  }
-}
-
-
-
+    /* Modal */
+    #customTaskModal {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: white; padding: 24px; width: 420px; max-width: 95%;
+      border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); z-index: 9999;
+    }
+    #customTaskModal h3 { margin-top: 0; margin-bottom: 14px; }
+    #customTaskModal label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    #customTaskModal input, #customTaskModal textarea, #customTaskModal select { margin-bottom: 14px; width: 100%;}
+    #customTaskModal .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index:9998; }
   </style>
 </head>
 <body>
-<header style="background: white; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;">
-  <div style="width: 200px;"></div> <div style="position: absolute; left: 50%; transform: translateX(-50%);">
+<header style="background: white; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); z-index: 1000; position: relative;">
+  <div style="width: 200px;"></div> 
+  <div style="position: absolute; left: 50%; transform: translateX(-50%);">
     <img src="RW-KOM.png" alt="Logo" style="height: 50px; display: block;">
   </div>
-
   <div style="width: 200px; text-align: right;">
-    <a href="https://zwgy5t.webwave.dev" target="_blank" style="text-decoration: none; color: #0b5cff; font-weight: bold; border: 1px solid #0b5cff; padding: 8px 15px; border-radius: 8px;">
+    <a href="https://zwgy5t.webwave.dev" target="_blank" style="text-decoration: none; color: #0b5cff; font-weight: bold; border: 1px solid #0b5cff; padding: 8px 15px; border-radius: 8px; font-size: 14px;">
       Strona główna
     </a>
   </div>
 </header>
-  <div class="app">
-    <div class="panel" id="step1">
-      <h3>1. Wybierz serię wydawniczą i poziom</h3>
-      <div class="series-list" id="seriesList"></div>
+
+  <div class="app-container" id="appContainer">
+    
+    <div class="sidebar-panel" id="sidebarPanel">
+      <button class="toggle-sidebar-btn" id="toggleSidebarBtn">◀</button>
+      
+      <div class="sidebar-content">
+        <div id="step1">
+          <h4 style="margin-top:0; margin-bottom:10px; color:#444;">1. Seria i poziom</h4>
+          <div class="series-list" id="seriesList"></div>
+        </div>
+        <hr style="border:none; border-top:1px solid #eee; margin:15px 0;">
+        <div id="topicsBox" class="hidden">
+          <h4 style="margin-top:0; margin-bottom:10px; color:#444;">2. Wybierz dział</h4>
+          <div class="topic-grid" id="topicGrid"></div>
+          <div class="topic-grid hidden" id="subtopicGrid" style="margin-top:6px;"></div>
+        </div>
+      </div>
     </div>
 
-
-    <div class="panel hidden" id="step2">
-      <h3>2. Wybierz dział / temat i zadania</h3>
-      <div class="search-row">
-        <input type="search" id="searchTasks" placeholder="Szukaj zadań..." />
-        <select id="typeFilter">
-  <option value="">Wszystkie typy</option>
-  <option value="PF">Prawda / Fałsz</option>
-  <option value="UZ">Uzupełnianie</option>
-  <option value="TL">Tłumaczenie</option>
-  <option value="OT">Otwarte</option>
-  <option value="MC">A/B/C</option>
-</select>
+    <div class="middle-workspace">
+      <div id="middleEmptyNotice" style="text-align:center; color:#888; margin-top:40px; font-weight:500; font-size:14px;">
+        ← Wybierz serię, klasę oraz dział z lewego menu, aby wyświetlić zadania.
       </div>
-	  <button id="addCustomTaskBtn" style="margin-top:10px;">➕ Dodaj własne zadanie</button>
-<br>
-<br>
-      <div class="topic-grid" id="topicGrid"></div>
-	  <div class="topic-grid hidden" id="subtopicGrid"></div>
-
-
-      <div style="margin-top:12px">
-        <h4>Zadań w dziale</h4>
+      
+      <div id="middleContent" class="hidden">
+        <h3 style="margin-top:0; margin-bottom:15px; font-size:16px;">Wybierz zadania do testu</h3>
+        
+        <div class="search-row">
+          <input type="search" id="searchTasks" placeholder="Szukaj w tym dziale..." />
+          <select id="typeFilter">
+            <option value="">Wszystkie typy</option>
+            <option value="PF">Prawda / Fałsz</option>
+            <option value="UZ">Uzupełnianie</option>
+            <option value="TL">Tłumaczenie</option>
+            <option value="OT">Otwarte</option>
+            <option value="MC">A/B/C</option>
+          </select>
+        </div>
+        
+        <button id="addCustomTaskBtn" style="background-color: #28a745; margin-bottom:15px; width:100%;">➕ Dodaj własne zadanie</button>
+        
         <div class="task-list" id="taskList"></div>
       </div>
     </div>
 
-    <div class="panel test-preview hidden" id="step3">
-      <div class="test-card" id="testCard">
-        <div class="header-row">
-          <div class="rw-logo">
-            <!-- Wstaw tutaj link do swojego logo -->
-            <img id="logoImg" src="RW.png" alt="RW logo" />
+    <div class="right-preview-workspace">
+      <div class="panel-header-box">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label for="titleInput" style="font-weight:700; font-size:13px; white-space:nowrap;">Tytuł testu:</label>
+            <input id="titleInput" type="text" placeholder="Wpisz tytuł sprawdzianu..." style="flex:1; padding:6px 10px; font-size:13px;">
           </div>
-          <div class="test-meta">
-            <!-- puste miejsca (Imię i nazwisko, Data) - wygląd dla druku -->
-			<text>Imię i nazwisko :</text>
-            <div style="border-bottom:1px solid #000; width:220px; height:20px"></div>
-			<text>Klasa, Data :</text>
-            <div style="width:150px; border-bottom:1px solid #000; height:20px"></div>
-
+          <div class="actions">
+            <button class="ghost" id="clearBtn" style="padding:6px 12px; font-size:12px;">Wyczyść</button>
+            <button id="printBtn" style="padding:6px 12px; font-size:12px;">Drukuj</button>
+            <button id="savePdf" style="background: #e63946; padding:6px 12px; font-size:12px;">Pobierz PDF</button>
           </div>
         </div>
-        <hr style="margin:12px 0;border:none;border-top:1px dashed #eef2ff" />
-        <div id="testContent">
-          <ol class="tasks" id="selectedTasks"></ol>
-		  		<hr style="margin:12px 0; border:none; border-top:1px solid #000" />
-<div class="test-footer" style="display:flex; justify-content:space-between; align-items:center; font-size:14px; margin-top:6px;">
-  <div class="footer-left">
-    <img src="RW-KOM.png" alt="RW logo" style="height:40px"/>
-  </div>
-  <div class="footer-center">
-    <span id="testTitle">Tytuł testu</span>
-  </div>
-  <div class="footer-right">
-    <span id="testDate"></span>
-  </div>
-</div>
+      </div>
+
+      <div class="test-page-container" id="testPageContainer">
+        <div style="text-align:center; padding:40px; color:#777; font-weight:500; background:white; border-radius:8px; border:1px dashed #cbd5e1; width:100%; box-sizing:border-box;" id="emptyNotice">
+          Arkusz jest pusty. Kliknij wybrane zadania ze środkowej kolumny, aby je tutaj dodać.
         </div>
       </div>
-<div style="display:flex; align-items:center; gap:10px;">
-  <label for="titleInput" style="font-weight:600;">Tytuł testu:</label>
-  <input id="titleInput" type="text" placeholder="Wpisz tytuł..." 
-         style="flex:1; padding:6px 10px; border:1px solid #dbe6ff; border-radius:8px;">
-</div>
+    </div>
 
-      <div class="actions">
-        <button class="ghost small" id="clearBtn">Wyczyść</button>
-        <button class="small" id="printBtn">Wydrukuj</button>
-        <button class="small" id="savePdf">Zapisz PDF</button>
-      </div>
-      <footer>Kliknij zadania, aby dodać je do testu. Podczas druku przyciski nie będą widoczne.</footer>
+  </div>
+
+  <div id="modalOverlay" class="modal-overlay hidden"></div>
+  <div id="customTaskModal" class="hidden">
+    <h3 id="modalHeaderTitle">Dodaj własne zadanie</h3>
+    <label>Tytuł zadania / Polecenie:</label>
+    <input id="ctTitle" type="text" placeholder="Np. Przetłumacz podane słowa:">
+
+    <label>Treść zadania (podpunkty):</label>
+    <textarea id="ctBody" rows="4" placeholder="a) łazpakej -&#10;b) meloven -"></textarea>
+
+    <label>Typ:</label>
+    <select id="ctType">
+      <option value="OT">Otwarte (OT)</option>
+      <option value="TL">Tłumaczenie (TL)</option>
+      <option value="PF">Prawda / Fałsz (PF)</option>
+      <option value="UZ">Uzupełnianie (UZ)</option>
+      <option value="MC">Wielokrotny wybór A/B/C (MC)</option>
+    </select>
+
+    <div class="modal-actions">
+      <button id="modalCancelBtn" class="ghost">Anuluj</button>
+      <button id="modalSaveBtn" style="background: #28a745;">Zapisz</button>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
   <script>
-    // ------- DANE: serie, działy, przykładowe zadanie -------
     const DATA = {
       series: [
-        { id: 's1', title: 'NOWY Język piotrowski na czasie', levels: ['6','7','8'] },
-        { id: 's2', title: 'NOWE Piotrowskie słowa', levels: ['7','8'] },
-        { id: 's3', title: 'NOWE Piotrowskie początki', levels: ['6'] },
-        { id: 's4', title: 'Piotrowskie zastosowanie', levels: ['1','2','3'] }
+        { id: 's1', title: 'NOWY Język piotrowski na czasie', levels: ['6','7','8'], edition: 'NOWOŚĆ! Edycja 04/2026' },
+        { id: 's2', title: 'NOWE Piotrowskie słowa', levels: ['7','8'], edition: 'Edycja 2025 - 2026' },
+        { id: 's3', title: 'NOWE Piotrowskie początki', levels: ['6'], edition: '' },
+        { id: 's4', title: 'Piotrowskie zastosowanie', levels: ['1','2','3'], edition: 'NOWA EDYCJA' }
       ],
-	  series: [
-  { id: 's1', title: 'NOWY Język piotrowski na czasie', levels: ['6','7','8'], edition: 'NOWOŚĆ! Edycja 04/2026, NOWOŚĆ! Startowa edycja' },
-  { id: 's2', title: 'NOWE Piotrowskie słowa', levels: ['7','8'], edition: 'Nowa edycja 2025 - 2026' },
-  { id: 's3', title: 'NOWE Piotrowskie początki', levels: ['6'], edition: '' },
-  { id: 's4', title: 'Piotrowskie zastosowanie', levels: ['1','2','3'], edition: 'NOWA EDYCJA 02/2026' }
-],
       topics: {
         "s1:6": ["Dział 1 - Podstawy języka piotrowskiego","Dział 2 - Świat liczb","Dział 3 - Gramatyka","Dział 4 - Nauka i technika"],
-        "s1:7": ["Dział 1 - Zdrowie","Dział 2 - Świat i przyroda","Dział 3 - Życie prywatne","Dział 4 - Człowiek","Szkolenie umiejętności bukingu i writingu"],
+        "s1:7": ["Dział 1 - Zdrowie","Dział 2 - Świat i przyroda","Dział 3 - Życie prywatne","Dział 4 - Człowiek"],
         "s1:8": ["Dział 1 - Miejsce zamieszkania","Dział 2 - Życie pracownicze","Dział 3 - Życie w szkole"],
-        "s2:7": ["Dział 1 - Człowiek","Dział 2 - Zdrowie","Dział 3 - Życie prywatne","Dział 4 - Świat i przyroda"],
-        "s2:8": ["Dział 1 - Miejsce zamieszkania","Dział 2 - Praca","Dział 3 - Edukacja"],
-        "s3:6": ["Alfabet i znaki piotrowskie","Liczby i daty","Gramatyka","Past Simple"],
-        "s4:1": ["Dział 1 - Sport","Dział 2 - Kultura","Dział 3 - Transport i turystyka"],
-        "s4:2": ["Dział 1 - Świat przyrody","Dział 2 - Zdrowie"],
-        "s4:3": ["Dział 1 - Żywienie","Dział 2 - Zakupy i usługi"],
-		"Własne": ["Własne zadania"]
+        "s2:7": ["Dział 1 - Człowiek","Dział 2 - Zdrowie"],
+        "s2:8": ["Dział 1 - Miejsce zamieszkania","Dział 2 - Praca"],
+        "s3:6": ["Alfabet i znaki piotrowskie","Liczby i daty"],
+        "s4:1": ["Dział 1 - Sport","Dział 2 - Kultura"]
       },
-	  subtopics: {
-  "Dział 4 - Nauka i technika": ["Osoby i czasowniki", "Urządzenia i przedmioty", "Szkoła i zajęcia", "Gramatyka"]
-},
-
-
-      // PRZYKŁAD: zadanie z podpunktami - zwróć uwagę, że nie powtarzamy tytułu w `body`
+      subtopics: {
+        "Dział 4 - Nauka i technika": ["Osoby i czasowniki", "Urządzenia i przedmioty", "Szkoła i zajęcia", "Gramatyka"]
+      },
       tasks: [
         {
           id: 's1_6_1',
@@ -2322,432 +2394,408 @@ min-height: 100vh;
           series: 's4',
           level: '3',
           body: "Twoje wypracowanie powinno zawierać: \n• Słownictwo żywienia\n• Zdanie w Present Hadsing \n• Rozwinięcie (Plan, Data, Jadłospis) \n• Wszystkie elementy pełnego zaproszenia\n <i>Zaproszenie napisz pod tabelą punktatycjną</i>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<b>Punktacja:</b>\nZawarcie słownictwa żywieniowego (0-2p):\nZawarcie zdania w Present Hadsing (0-1p):\nZawarcie rozwinięcia (0-3p):\nZawarcie wszystkich elementów zaproszenia (0-3p):\n-<i>Treść zaproszenia:</i>\n-<i>Myślenie nad zaproszeniem:</i>\n-<i>Odpowiedź na zaproszenie:</i>"
-        },
-      ]
+        },      ]
     };
 
-    // ------- STATE -------
-    let selectedSeries=null, selectedLevel=null, selectedTopic=null, selectedTasks=[];
-	let selectedSubtopic = null;
+    let currentSeries = '';
+    let currentLevel = '';
+    let currentTopic = '';
+    let currentSubtopic = '';
+    let selectedTasks = [];
+    let editingTaskId = null; // Przechowuje ID edytowanego zadania (null = dodawanie nowego)
 
+    document.addEventListener("DOMContentLoaded", () => {
+      initSeries();
+      setupEventListeners();
+    });
 
-    // ------- HELPERS -------
-    function escapeHtml(str){
-      return String(str)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,"&#39;");
-    }
-
-    // ------- ELEMENTY -------
-    const seriesList = document.getElementById('seriesList');
-    const topicGrid = document.getElementById('topicGrid');
-    const taskList = document.getElementById('taskList');
-    const selectedTasksOl = document.getElementById('selectedTasks');
-    const searchInput = document.getElementById('searchTasks');
-    const typeFilter = document.getElementById('typeFilter');
-
-    // ------- RENDERING -------
-    function renderSeries() {
-  seriesList.innerHTML = '';
-  DATA.series.forEach(s => {
-    const edition = s.edition || 'Nowa podstawa 2022';
-
-    const el = document.createElement('div');
-    el.className = 'series';
-    el.innerHTML = `
-      <div class="title">${escapeHtml(s.title)}</div>
-      <div class="series-footer">
-        <div class="levels" data-id="${s.id}">
-          ${s.levels.map(l =>
-            `<div class="level" data-level="${l}" data-series="${s.id}">Klasa ${l}</div>`
-          ).join('')}
+    function initSeries() {
+      const container = document.getElementById('seriesList');
+      container.innerHTML = DATA.series.map(s => `
+        <div class="series" onclick="selectSeries('${s.id}')" id="series_${s.id}">
+          <div class="title">${s.title}</div>
+          <div class="series-footer">
+            <div class="levels">
+              ${s.levels.map(l => `<span class="level" onclick="event.stopPropagation(); selectLevel('${s.id}', '${l}')" id="level_${s.id}_${l}">${l}</span>`).join('')}
+            </div>
+            <div class="edition">${s.edition}</div>
+          </div>
         </div>
-        <span class="edition">• ${edition}</span>
-      </div>
-    `;
-    seriesList.appendChild(el);
-  });
-}
+      `).join('');
+    }
 
+    function selectSeries(id) {
+      currentSeries = id;
+      document.querySelectorAll('.series').forEach(el => el.style.borderColor = '#e8ebf8');
+      document.getElementById(`series_${id}`).style.borderColor = 'var(--accent)';
+    }
 
+    window.selectLevel = function(seriesId, level) {
+      selectSeries(seriesId);
+      currentLevel = level;
+      document.querySelectorAll('.level').forEach(el => el.classList.remove('active'));
+      document.getElementById(`level_${seriesId}_${level}`).classList.add('active');
+      showTopics();
+    }
 
-    function renderTopics(){
-      topicGrid.innerHTML = '';
-      if(!selectedSeries || !selectedLevel){ topicGrid.innerHTML = '<div style="color:var(--muted)">Wybierz serię i poziom</div>'; return; }
-      const key = `${selectedSeries}:${selectedLevel}`;
-      (DATA.topics[key]||[]).forEach(t=>{
-        const el = document.createElement('div');
-        el.className = 'topic';
-        el.textContent = t;
-        el.onclick = () => {
-  selectedTopic = t;
-  renderSubtopics();
-  document.querySelectorAll('.topic').forEach(x => x.classList.remove('active'));
-  el.classList.add('active');
-  renderTaskList();
-};
-function renderSubtopics() {
-  const grid = document.getElementById('subtopicGrid');
-  grid.innerHTML = '';
-  const subs = DATA.subtopics[selectedTopic];
-  if (!subs) {
-    grid.classList.add('hidden');
-    return;
-  }
-  grid.classList.remove('hidden');
-  subs.forEach(st => {
-    const el = document.createElement('div');
-    el.className = 'topic subtopic';
-    el.textContent = st;
-    el.onclick = () => {
-  selectedSubtopic = st;
-  document.querySelectorAll('.topic').forEach(x => x.classList.remove('active'));
-  el.classList.add('active');
-  renderSubtopics();
-  renderTaskList();
-};
+    function showTopics() {
+      const key = `${currentSeries}:${currentLevel}`;
+      const topics = DATA.topics[key] || [];
+      const grid = document.getElementById('topicGrid');
+      
+      grid.innerHTML = topics.map(t => `
+        <div class="topic" id="topic_${t}" onclick="selectTopic('${t}')">${t}</div>
+      `).join('');
+      
+      document.getElementById('topicsBox').classList.remove('hidden');
+      document.getElementById('subtopicGrid').classList.add('hidden');
+      document.getElementById('middleContent').classList.add('hidden');
+      document.getElementById('middleEmptyNotice').classList.remove('hidden');
+    }
 
-    grid.appendChild(el);
-  });
-}
+    window.selectTopic = function(topicName) {
+      currentTopic = topicName;
+      currentSubtopic = '';
+      document.querySelectorAll('.topic').forEach(el => el.classList.remove('active'));
+      const activeEl = document.getElementById(`topic_${topicName}`);
+      if(activeEl) activeEl.classList.add('active');
 
-        topicGrid.appendChild(el);
+      if (DATA.subtopics[topicName]) {
+        const subGrid = document.getElementById('subtopicGrid');
+        subGrid.classList.remove('hidden');
+        subGrid.innerHTML = DATA.subtopics[topicName].map(st => `
+          <div class="topic subtopic" id="subtopic_${st}" onclick="selectSubtopic('${st}')">${st}</div>
+        `).join('');
+        document.getElementById('middleContent').classList.add('hidden');
+        document.getElementById('middleEmptyNotice').classList.remove('hidden');
+      } else {
+        document.getElementById('subtopicGrid').classList.add('hidden');
+        revealMiddleWorkspace();
+      }
+    }
+
+    window.selectSubtopic = function(subtopicName) {
+      currentSubtopic = subtopicName;
+      document.querySelectorAll('.subtopic').forEach(el => el.classList.remove('active'));
+      document.getElementById(`subtopic_${subtopicName}`).classList.add('active');
+      revealMiddleWorkspace();
+    }
+
+    function revealMiddleWorkspace() {
+      document.getElementById('middleEmptyNotice').classList.add('hidden');
+      document.getElementById('middleContent').classList.remove('hidden');
+      renderTaskList();
+    }
+
+    function renderTaskList() {
+      const searchVal = document.getElementById('searchTasks').value.toLowerCase();
+      const typeVal = document.getElementById('typeFilter').value;
+      const container = document.getElementById('taskList');
+      
+      let filtered = DATA.tasks.filter(t => {
+        return t.series === currentSeries && t.level === currentLevel && t.topic === currentTopic && (currentSubtopic ? t.subtopic === currentSubtopic : true);
+      });
+
+      if(searchVal) {
+        filtered = filtered.filter(t => t.title.toLowerCase().includes(searchVal) || (typeof t.body === 'string' && t.body.toLowerCase().includes(searchVal)));
+      }
+      if(typeVal) {
+        filtered = filtered.filter(t => t.type === typeVal);
+      }
+
+      if(filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#aaa; font-size:13px;">Brak zadań.</div>`;
+        return;
+      }
+
+      // Wstrzyknięcie przycisku edycji "✏️" obok nazwy zadania
+      container.innerHTML = filtered.map(t => `
+        <div class="task" onclick="addTaskToTest('${t.id}')">
+          <div style="width:100%;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap: 8px;">
+              <strong style="font-size:13px; color:#1e293b; flex:1;">${t.title}</strong>
+              <div style="display:flex; align-items:center; gap:4px;" onclick="event.stopPropagation();">
+                <button class="btn-edit-task" onclick="openEditTaskModal('${t.id}')" title="Edytuj treść zadania w bazie">✏️</button>
+                <span style="background:#e0f2fe; color:#0369a1; padding:2px 5px; border-radius:4px; font-size:10px; font-weight:700;">${t.type}</span>
+              </div>
+            </div>
+            <div class="meta">${typeof t.body === 'string' ? t.body.replace(/\n/g, '<br>') : t.body.join(', ')}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Otwieranie Modala w trybie EDYCJI zadania
+    window.openEditTaskModal = function(id) {
+      const task = DATA.tasks.find(t => t.id === id);
+      if(!task) return;
+
+      editingTaskId = id;
+      document.getElementById('modalHeaderTitle').innerText = "Edytuj zadanie w bazie";
+      
+      // Czyszczenie dopisków przy edycji bazy, żeby nie kumulować tekstu "(Własne)"
+      document.getElementById('ctTitle').value = task.title.replace(' (Własne)', '').replace(' (Edytowane)', '');
+      document.getElementById('ctBody').value = Array.isArray(task.body) ? task.body.join('\n') : task.body;
+      document.getElementById('ctType').value = task.type;
+
+      document.getElementById('customTaskModal').classList.remove('hidden');
+      document.getElementById('modalOverlay').classList.remove('hidden');
+    }
+
+    window.addTaskToTest = function(id) {
+      const task = DATA.tasks.find(t => t.id === id);
+      if(task) {
+        selectedTasks.push({...task, uniqueId: Date.now() + Math.random().toString(36).substr(2, 5)});
+        renderTestPreview();
+      }
+    }
+
+    function renderTestPreview() {
+      const container = document.getElementById('testPageContainer');
+      container.innerHTML = '';
+
+      if (selectedTasks.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:40px; color:#777; font-weight:500; background:white; border-radius:8px; border:1px dashed #cbd5e1; width:100%; box-sizing:border-box;" id="emptyNotice">
+            Arkusz jest pusty. Kliknij wybrane zadania ze środkowej kolumny, aby je tutaj dodać.
+          </div>
+        `;
+        return;
+      }
+
+      let pageNum = 1;
+      let currentPage = createNewPageStructure(pageNum);
+      container.appendChild(currentPage);
+      let currentList = currentPage.querySelector('.tasks');
+
+      const maxContentHeight = 840; 
+
+      selectedTasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        
+        let bodyHtml = '';
+        if (typeof task.body === 'string') {
+          bodyHtml = task.body.replace(/\n/g, '<br>');
+        } else if (Array.isArray(task.body)) {
+          bodyHtml = `<ul style="padding-left:20px; margin-top:5px;">${task.body.map(b => `<li>${b} [P / F]</li>`).join('')}</ul>`;
+        }
+
+        // Tytuły oczyszczamy z technicznych dopisków systemowych przy generowaniu arkusza
+        const cleanTitle = task.title.replace(' (Własne)', '').replace(' (Edytowane)', '');
+
+        li.innerHTML = `
+          <div class="task-item-body">
+            <strong style="font-size:15px; display:block; margin-bottom:4px;">Zadanie ${index + 1}. <span style="font-weight:500;">${cleanTitle}</span></strong>
+            <div style="padding-left:4px; font-size:14px; color:#333; line-height: 1.5;">${bodyHtml}</div>
+          </div>
+          <div class="task-move-buttons">
+            <button class="btn-move" onclick="moveTask(${index}, -1)">▲</button>
+            <button class="btn-move" onclick="moveTask(${index}, 1)">▼</button>
+            <button class="btn-move btn-delete" onclick="deleteTask(${index})">🗑️</button>
+          </div>
+        `;
+
+        currentList.appendChild(li);
+
+        if (currentList.offsetHeight > maxContentHeight && currentList.children.length > 1) {
+          currentList.removeChild(li);
+          pageNum++;
+          currentPage = createNewPageStructure(pageNum);
+          container.appendChild(currentPage);
+          currentList = currentPage.querySelector('.tasks');
+          currentList.appendChild(li);
+        }
+      });
+
+      updateFooters();
+    }
+
+    function createNewPageStructure(pageNum) {
+      const page = document.createElement('div');
+      page.className = 'test-page';
+      
+      let headerHtml = `
+        <div class="header-row">
+          <div class="rw-logo"><img src="RW.png" alt="RW logo" onerror="this.style.display='none'" /></div>
+          <div class="test-meta">
+            <span>Imię i nazwisko:</span>
+            <div style="border-bottom:1px solid #000; width:160px; height:14px"></div>
+            <span>Klasa, Data:</span>
+            <div style="width:90px; border-bottom:1px solid #000; height:14px"></div>
+          </div>
+        </div>
+        <hr style="margin:12px 0; border:none; border-top:1px dashed #cfd4dc" />
+      `;
+
+      if (pageNum > 1) {
+        headerHtml = `
+          <div class="header-row">
+            <div class="rw-logo"><img src="RW.png" alt="RW logo" onerror="this.style.display='none'" /></div>
+            <div style="font-size:11px; color:#777; font-weight:600; text-align:right;">Strona ${pageNum} (Kontynuacja)</div>
+          </div>
+          <hr style="margin:12px 0; border:none; border-top:1px dashed #cfd4dc" />
+        `;
+      }
+
+      page.innerHTML = `
+        <div class="test-page-content">
+          ${headerHtml}
+          <ol class="tasks"></ol>
+        </div>
+        <div class="test-footer" style="display:flex; justify-content:space-between; align-items:center; font-size:12px; border-top:1px solid #000; padding-top:6px; margin-top:10px; flex-shrink:0;">
+          <div><img src="RW-KOM.png" alt="RW logo" style="height:26px" onerror="this.style.display='none'"/></div>
+          <div><span class="dynamic-footer-title" style="font-weight:700;">Tytuł testu</span></div>
+          <div><span class="dynamic-footer-date"></span></div>
+        </div>
+      `;
+      return page;
+    }
+
+    function updateFooters() {
+      const userTitle = document.getElementById('titleInput').value || 'Tytuł testu';
+      const today = new Date().toLocaleDateString('pl-PL');
+      document.querySelectorAll('.dynamic-footer-title').forEach(el => el.innerText = userTitle);
+      document.querySelectorAll('.dynamic-footer-date').forEach(el => el.innerText = today);
+    }
+
+    window.moveTask = function(index, direction) {
+      const newIndex = index + direction;
+      if (newIndex >= 0 && newIndex < selectedTasks.length) {
+        const temp = selectedTasks[index];
+        selectedTasks[index] = selectedTasks[newIndex];
+        selectedTasks[newIndex] = temp;
+        renderTestPreview();
+      }
+    }
+
+    window.deleteTask = function(index) {
+      selectedTasks.splice(index, 1);
+      renderTestPreview();
+    }
+
+    function setupEventListeners() {
+      const sidebarPanel = document.getElementById('sidebarPanel');
+      const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+      const appContainer = document.getElementById('appContainer');
+      
+      toggleSidebarBtn.addEventListener('click', () => {
+        sidebarPanel.classList.toggle('collapsed');
+        appContainer.classList.toggle('sidebar-collapsed');
+        toggleSidebarBtn.innerText = sidebarPanel.classList.contains('collapsed') ? '▶' : '◀';
+      });
+
+      document.getElementById('searchTasks').addEventListener('input', renderTaskList);
+      document.getElementById('typeFilter').addEventListener('change', renderTaskList);
+      document.getElementById('titleInput').addEventListener('input', updateFooters);
+
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        selectedTasks = [];
+        renderTestPreview();
+      });
+
+      document.getElementById('printBtn').addEventListener('click', () => {
+        window.print();
+      });
+
+      document.getElementById('savePdf').addEventListener('click', () => {
+        const element = document.getElementById('testPageContainer');
+        const testTitle = document.getElementById('titleInput').value.trim() || 'kompozytor-klasowki';
+        const safeFileName = testTitle.replace(/[/\\?%*:|"<>\s]/g, '_') + '.pdf';
+
+        const opt = {
+          margin:       0,
+          filename:     safeFileName,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save();
+      });
+
+      // OBSŁUGA OKNA MODALNEGO (DODAWANIE I EDYCJA)
+      const addCustomTaskBtn = document.getElementById('addCustomTaskBtn');
+      const customTaskModal = document.getElementById('customTaskModal');
+      const modalOverlay = document.getElementById('modalOverlay');
+      const modalCancelBtn = document.getElementById('modalCancelBtn');
+      const modalSaveBtn = document.getElementById('modalSaveBtn');
+
+      addCustomTaskBtn.addEventListener('click', () => {
+        if(!currentSeries || !currentLevel || !currentTopic) {
+          alert('Najpierw wybierz serię, poziom oraz dział w lewym menu!');
+          return;
+        }
+        editingTaskId = null; // Tryb dodawania nowego zadania
+        document.getElementById('modalHeaderTitle').innerText = "Dodaj własne zadanie";
+        customTaskModal.classList.remove('hidden');
+        modalOverlay.classList.remove('hidden');
+      });
+
+      const closeModal = () => {
+        customTaskModal.classList.add('hidden');
+        modalOverlay.classList.add('hidden');
+        document.getElementById('ctTitle').value = '';
+        document.getElementById('ctBody').value = '';
+        editingTaskId = null;
+      };
+
+      modalCancelBtn.addEventListener('click', closeModal);
+      modalOverlay.addEventListener('click', closeModal);
+
+      modalSaveBtn.addEventListener('click', () => {
+        const title = document.getElementById('ctTitle').value.trim();
+        const bodyText = document.getElementById('ctBody').value.trim();
+        const type = document.getElementById('ctType').value;
+
+        if(!title) {
+          alert('Wpisz polecenie zadania.');
+          return;
+        }
+
+        // Obsługa formatowania Prawda/Fałsz jako tablica, jeśli wybrano ten typ i tekst ma linie
+        let finalBody = bodyText;
+        if (type === 'PF' && bodyText.includes('\n')) {
+          finalBody = bodyText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+        }
+
+        if (editingTaskId !== null) {
+          // --- TRYB EDYCJI ISTNIEJĄCEGO ZADANIA ---
+          const taskIndex = DATA.tasks.findIndex(t => t.id === editingTaskId);
+          if (taskIndex !== -1) {
+            DATA.tasks[taskIndex].title = title + " (Edytowane)";
+            DATA.tasks[taskIndex].body = finalBody;
+            DATA.tasks[taskIndex].type = type;
+
+            // Synchronizacja zmian na arkuszu sprawdzianu (jeśli zadanie już tam było dodane)
+            selectedTasks.forEach(st => {
+              if (st.id === editingTaskId) {
+                st.title = title + " (Edytowane)";
+                st.body = finalBody;
+                st.type = type;
+              }
+            });
+          }
+        } else {
+          // --- TRYB TWORZENIA NOWEGO ZADANIA ---
+          const newCustomTask = {
+            id: 'custom_' + Date.now(),
+            title: title + " (Własne)",
+            type: type,
+            topic: currentTopic,
+            series: currentSeries,
+            level: currentLevel,
+            body: finalBody
+          };
+          if(currentSubtopic) newCustomTask.subtopic = currentSubtopic;
+          DATA.tasks.push(newCustomTask);
+        }
+
+        renderTaskList();
+        renderTestPreview();
+        closeModal();
       });
     }
-
-    function renderTaskList(){
-	const selectedType = document.getElementById('typeFilter').value;
-  taskList.innerHTML = '';
-  if(!selectedTopic){
-    taskList.innerHTML = '<div style="color:var(--muted)">Wybierz dział / temat powyżej</div>';
-    return;
-  }
-
-  const tasks = DATA.tasks.filter(t =>
-  t.topic === selectedTopic &&
-  (!selectedSubtopic || t.subtopic === selectedSubtopic) &&
-  t.series === selectedSeries &&
-  t.level === selectedLevel &&
-  (!selectedType || t.type === selectedType) && // 🔥 TO DODAJESZ
-  !selectedTasks.find(st => st.id === t.id)
-);
-
-  if(tasks.length === 0){
-    taskList.innerHTML = '<div style="color:var(--muted)">Brak zadań w tym dziale lub wszystkie zostały dodane</div>';
-    return;
-  }
-
-  tasks.forEach(t=>{
-    const el = document.createElement('div');
-    el.className = 'task';
-    el.innerHTML = `
-      <div style='flex:1'>
-        <div style='font-weight:700'>${t.title}</div>
-        <div class='meta'>Typ: ${t.type}</div>
-        <div style='margin-top:8px'>${t.body}</div>
-      </div>
-      <div>
-        <button class='small' data-id='${t.id}'>Dodaj</button>
-      </div>`;
-    el.querySelector('button').onclick = () => addTask(t.id);
-    taskList.appendChild(el);
-  });
-}
-
-function renderSelected(){
-  selectedTasksOl.innerHTML = '';
-  selectedTasks.forEach((t,i)=>{
-    const li = document.createElement('li');
-    li.className = 'task-item';
-
-    let taskContent = '';
-
-    if(t.type === 'PF'){
-      const tableHTML = Array.isArray(t.body) 
-        ? generatePFTable(t.body)
-        : t.body;
-      taskContent = `<strong>${i+1}. ${t.title}</strong>
-                     <div style="margin-top:6px">${tableHTML}</div>`;
-    } else {
-      const formattedBody = (t.body||'').replace(/\n/g,'<br>');
-      taskContent = `<strong>${i+1}. ${t.title}</strong>
-                     <div style="margin-top:6px">${formattedBody}</div>`;
-    }
-
-    li.innerHTML = `
-      ${taskContent}
-      <div style="margin-top:6px; text-align:right">
-        <button class="small ghost" data-id="${t.id}">Cofnij</button>
-      </div>`;
-
-    // przycisk cofnięcia
-    li.querySelector('button').onclick = () => {
-      selectedTasks = selectedTasks.filter(st => st.id !== t.id);
-      renderSelected();
-      renderTaskList(); // przywraca zadanie na listę
-    }
-
-    selectedTasksOl.appendChild(li);
-  });
-}
-
-
-// pomocnicza funkcja do generowania tabeli P/F z tablicy zdań
-function generatePFTable(sentences){
-  const rows = sentences.map(s => `<tr><td style="text-align:left; padding:6px;">${escapeHtml(s)}</td><td></td><td></td></tr>`).join('');
-  return `<table border="1" style="border-collapse: collapse; width:100%; text-align:center;">
-            <tr>
-              <th style="padding:6px;">Zdanie</th>
-              <th style="padding:6px;">Prawda</th>
-              <th style="padding:6px;">Fałsz</th>
-            </tr>
-            ${rows}
-          </table>`;
-}
-
-
-    // ------- ACTIONS -------
-    function addTask(id){
-  if(selectedTasks.find(x=>x.id===id)) return;
-  const t = DATA.tasks.find(x=>x.id===id);
-  if(!t) return;
-
-  selectedTasks.push(t);
-  renderSelected();
-  renderTaskList(); // odśwież listę, aby usunąć dodane zadanie
-}
-
-    document.addEventListener('click', (e)=>{
-  if(e.target.classList.contains('level')){
-    document.querySelectorAll('.level').forEach(x=>x.classList.remove('active'));
-    e.target.classList.add('active');
-    selectedSeries = e.target.dataset.series;
-    selectedLevel = e.target.dataset.level;
-
-    // przełączanie widoków
-    document.getElementById('step1').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
-    document.getElementById('step3').classList.remove('hidden');
-
-    // zmiana układu na 3 kolumny
-    document.querySelector('.app').classList.remove('single');
-
-    renderTopics();
-    renderTaskList();
-  }
-});
-
-
-    searchInput.addEventListener('input', renderTaskList);
-    typeFilter.addEventListener('change', renderTaskList);
-
-    document.getElementById('clearBtn').onclick = ()=>{ selectedTasks = []; renderSelected(); }
-
-    document.getElementById('printBtn').onclick = ()=>{
-      // klonujemy test i usuwamy przyciski przed drukiem
-      const el = document.getElementById('testCard').cloneNode(true);
-      el.querySelectorAll('button').forEach(b=>b.remove());
-      const w = window.open('','_blank');
-      w.document.write('<html><head><title>Test</title></head><body>');
-      w.document.body.appendChild(el);
-      w.document.write('</body></html>');
-      w.document.close(); w.print();
-    }
-
-    document.getElementById('savePdf').onclick = ()=>{
-      const el = document.getElementById('testCard').cloneNode(true);
-      el.querySelectorAll('button').forEach(b=>b.remove());
-      html2pdf().set({margin:10, filename:'test_RW.pdf', html2canvas:{scale:2}}).from(el).save();
-    }
-
-    // init
-    renderSeries();
-	// Na początku tylko krok 1 i szeroki układ
-document.querySelector('.app').classList.add('single');
-
-	
-	function updateFooter(){
-  const dateEl = document.getElementById('testDate');
-  const today = new Date();
-  const formatted = today.toLocaleDateString('pl-PL');
-  dateEl.textContent = formatted;
-}
-
-function setTestTitle(title){
-  const titleEl = document.getElementById('testTitle');
-  titleEl.textContent = title || 'Tytuł testu';
-}
-
-// wywołanie przy starcie
-updateFooter();
-
-	// --- aktualizacja tytułu testu na żywo ---
-const titleInput = document.getElementById('titleInput');
-const titleSpan = document.getElementById('testTitle');
-
-if (titleInput && titleSpan) {
-  titleInput.addEventListener('input', () => {
-    titleSpan.textContent = titleInput.value.trim() || 'Tytuł testu';
-  });
-}
-// ===========================
-// OBSŁUGA MODALA + DODAWANIE ZADANIA
-// ===========================
-document.addEventListener('DOMContentLoaded', () => {
-  const modal = document.getElementById("customTaskModal");
-  const addBtn = document.getElementById("addCustomTaskBtn");
-  const saveBtn = document.getElementById("ctSave");
-  const cancelBtn = document.getElementById("ctCancel");
-
-  const titleInput = document.getElementById("ctTitle");
-  const bodyInput  = document.getElementById("ctBody");
-  const typeInput  = document.getElementById("ctType");
-  const imageInput = document.getElementById("ctImage");
-
-  // --- otwarcie okna ---
-  addBtn.addEventListener("click", () => {
-    modal.classList.remove("hidden");
-  });
-
-  // --- zamknięcie okna ---
-  cancelBtn.addEventListener("click", () => {
-    modal.classList.add("hidden");
-  });
-
-  // --- dodawanie nowego zadania ---
-  saveBtn.addEventListener("click", async () => {
-    const title = titleInput.value.trim();
-    const body  = bodyInput.value.trim();
-    const type  = typeInput.value;
-
-    if (!title || !body) {
-      alert("Uzupełnij tytuł i treść zadania.");
-      return;
-    }
-
-    // Obrazek (opcjonalnie)
-    let finalBody = body;
-    if (imageInput.files.length > 0) {
-      const file = imageInput.files[0];
-      finalBody = await new Promise(resolve => {
-        const r = new FileReader();
-        r.onload = e => resolve(`<img src="${e.target.result}" style="max-width:250px;"><br>` + body);
-        r.readAsDataURL(file);
-      });
-    }
-
-    // Obiekt zadania
-    const newTask = {
-      id: "custom_" + Date.now(),
-      title,
-      body: finalBody,
-      type,
-      topic: "Własne zadania",
-series: selectedSeries,
-level: selectedLevel
-
-
-    };
-
-    // Dodanie do istniejących danych
-    DATA.tasks.push(newTask);
-
-    // Reset + zamknięcie
-    modal.classList.add("hidden");
-    titleInput.value = "";
-    bodyInput.value = "";
-    imageInput.value = "";
-
-    // Odśwież listę
-    if (typeof renderTasks === "function") renderTasks();
-    else if (typeof loadTasks === "function") loadTasks();
-
-    alert("Zadanie dodane!");
-  });
-});
-document.getElementById('savePdf').addEventListener('click', () => {
-  // Pobieramy tytuł z pola input, żeby nazwa pliku była poprawna
-  const testTitle = document.getElementById('titleInput').value || 'moj-test';
-  
-  // Wskazujemy tylko element karty testu (bez przycisków panelu)
-  const element = document.getElementById('testCard');
-
-  const opt = {
-    margin:       [10, 10], // marginesy [góra/dół, lewo/prawo]
-    filename:     `${testTitle}.pdf`,
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true }, // scale: 2 poprawia jakość
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-
-  // Uruchamiamy generowanie tylko RAZ
-  html2pdf().set(opt).from(element).save();
-});
-document.getElementById('typeFilter').addEventListener('change', () => {
-  renderTasks();
-});
   </script>
-  
-  <!-- MODAL – PRAWIDZIWE OKNO -->
-<div id="customTaskModal" class="hidden" style="
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  width: 400px;
-  max-width: 95%;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-  z-index: 9999;
-">
-  <h3>Dodaj własne zadanie</h3>
-
-  <label>Tytuł:</label>
-  <input id="ctTitle" type="text" style="width:100%; margin-bottom:10px;">
-
-  <label>Treść zadania:</label>
-  <textarea id="ctBody" style="width:100%; height:90px; margin-bottom:10px;"></textarea>
-
-  <label>Typ zadania:</label>
-  <select id="ctType" style="width:100%; margin-bottom:10px;">
-    <option value="OT">Otwarte</option>
-    <option value="TL">Tłumaczenie</option>
-    <option value="UZ">Uzupełnianie</option>
-    <option value="PF">Prawda/Fałsz</option>
-  </select>
-
-  <label>Obrazek (opcjonalnie):</label>
-  <input id="ctImage" type="file" accept="image/*" style="margin-bottom:15px;">
-
-  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
-    <button id="ctCancel" class="ghost">Anuluj</button>
-    <button id="ctSave">Zapisz</button>
-  </div>
-</div>
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
