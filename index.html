@@ -2699,36 +2699,47 @@
       });
 
       document.getElementById('savePdf').addEventListener('click', () => {
-  // Pobieramy kartę testu (zależnie od tego, co pobierasz – jeśli pobierasz cały kontener, html2pdf i tak uderza w strukturę)
+  // Pobieramy element testu (w zależności od tego, czy używasz akurat struktury jedno- czy wielostronicowej)
   const element = document.getElementById('testCard') || document.getElementById('testPageContainer');
   const testTitle = document.getElementById('titleInput').value.trim() || 'kompozytor-klasowki';
   const safeFileName = testTitle.replace(/[/\\?%*:|"<>\s]/g, '_') + '.pdf';
 
-  // 1. Ukrywamy techniczne przyciski nawigacji zadań
+  // 1. Ukrywamy techniczne przyciski (strzałki, kosz), aby nie trafiły do PDF
   const buttons = document.querySelectorAll('.task-move-buttons');
   buttons.forEach(btn => btn.style.display = 'none');
 
-  // 2. Usuwamy cień i zaokrąglenie rogów z karty testu, żeby PDF był idealnie gładką kartką A4
+  // 2. Tymczasowo zdejmujemy cienie i ramki w CSS za pomocą klasy lub stylów bezpośrednich
   const originalShadow = element.style.boxShadow;
-  const originalBorderRadius = element.style.borderRadius;
+  const originalBorder = element.style.border;
   element.style.boxShadow = 'none';
-  element.style.borderRadius = '0';
+  element.style.border = 'none';
 
+  // CONFIG: Kluczowe modyfikacje usuwające ramki i wymuszające idealne białe tło papieru
   const opt = {
-    margin:       0,
+    margin:       0, // Brak marginesów zewnętrznych, które tworzą biało-szare obwódki
     filename:     safeFileName,
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true },
+    image:        { type: 'jpeg', quality: 1.0 }, // Podnosimy jakość do maksimum
+    html2canvas:  { 
+      scale: 2, 
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff', // Wymuszamy czyste, białe tło (likwiduje szare artefakty)
+      removeContainer: true       // Usuwa techniczny kontener renderujący biblioteki
+    },
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
-  // 3. Generujemy PDF, a po zakończeniu przywracamy pierwotny wygląd na ekranie
+  // 3. Generujemy plik, a po zapisaniu przywracamy pierwotny wygląd aplikacji na ekranie
   html2pdf().set(opt).from(element).save().then(() => {
-    // Przywracamy przyciski nawigacji
     buttons.forEach(btn => btn.style.display = 'flex');
-    // Przywracamy cień i zaokrąglenia na ekranie komputera
     element.style.boxShadow = originalShadow;
-    element.style.borderRadius = originalBorderRadius;
+    element.style.border = originalBorder;
+  }).catch(err => {
+    // W razie błędu też przywracamy przyciski
+    buttons.forEach(btn => btn.style.display = 'flex');
+    element.style.boxShadow = originalShadow;
+    element.style.border = originalBorder;
+    console.error(err);
   });
 });
 
